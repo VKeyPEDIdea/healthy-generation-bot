@@ -1,4 +1,5 @@
 const fsp = require('node:fs/promises');
+const fs = require('node:fs');
 const path = require('node:path');
 
 const { Telegraf } = require('telegraf');
@@ -6,9 +7,14 @@ const BOT_TOKEN = process.env.BOT_TOKEN;
 const bot = new Telegraf(BOT_TOKEN);
 
 const dbPath = path.join(process.cwd(), './db')
+const userDbPath = path.join(process.cwd(), './db/users')
 
 const writeUserNameToDB = async (userId, data) => {
-    const filePath = `${dbPath}/users/${userId}.json`;
+	if (!fs.existsSync(dbPath)) {
+		fs.mkdirSync(dbPath);
+		fs.mkdirSync(userDbPath);
+	}
+	const filePath = `${userDbPath}/${userId}.json`;
     return await fsp.writeFile(filePath, data);
 };
 
