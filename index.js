@@ -1,29 +1,7 @@
-const { Telegraf, Markup } = require('telegraf');
-const BOT_TOKEN = process.env.BOT_TOKEN;
-const bot = new Telegraf(BOT_TOKEN);
-
-const langMsg = `
-Интерфейс тілін таңдаңыз. 
-------------------------------- 
-Выберите язык интерфейса. 
-`;
-
-const messages = {
-	city: 'Выберите город',
-	lang: langMsg,
-};
-
-const cities = {
-	'Almaty': 'Алматы',
-	'Ust-Kamenogorsk': 'Усть-Каменогорск',
-};
-
-const actions = {};
-for (const key in cities) {
-	actions[key] = async (ctx) => {
-		await ctx.editMessageText('Спасибо, вы указали город: ' + cities[key])
-	};
-}
+const { Markup } = require('telegraf');
+const bot = require('./lib/bot');
+const messages = require('./lib/messages');
+const actions = require('./lib/actions');
 
 for (const trigger in actions) {
 	bot.action(trigger, actions[trigger]);
