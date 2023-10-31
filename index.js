@@ -1,72 +1,54 @@
-const fsp = require('node:fs/promises');
-const fs = require('node:fs');
-const path = require('node:path');
-
-const { Telegraf } = require('telegraf');
+const { Telegraf, Markup } = require('telegraf');
 const BOT_TOKEN = process.env.BOT_TOKEN;
 const bot = new Telegraf(BOT_TOKEN);
 
-const dbPath = path.join(process.cwd(), './db')
-const userDbPath = path.join(process.cwd(), './db/users')
-
-const writeUserNameToDB = async (userId, data) => {
-	if (!fs.existsSync(dbPath)) {
-		fs.mkdirSync(dbPath);
-		fs.mkdirSync(userDbPath);
-	}
-	const filePath = `${userDbPath}/${userId}.json`;
-    return await fsp.writeFile(filePath, data);
-};
-
-const state = {
-    lastMessageId: null,
-};
-
-const isMessageName = (ctx) => {
-    return ctx.message.message_id - state.lastMessageId === 2;
-}
-
-const start = `
-Есіміңізді көрсетіңіз
--------------------------------
-Напишите, пожалуйста, своё имя ⬇️ 
-`;
-
-const lang = `
+const langMsg = `
 Интерфейс тілін таңдаңыз. 
 ------------------------------- 
 Выберите язык интерфейса. 
 `;
 
-const messageList = {
-    start,
-    city: 'Выберите город',
-    lang,
+const messages = {
+	city: 'Выберите город',
+	lang: langMsg,
 };
 
+const cities = {
+	'Almaty': 'Алматы',
+	'Ust-Kamenogorsk': 'Усть-Каменогорск',
+};
+
+const actions = {};
+for (const key in cities) {
+	actions[key] = async (ctx) => {
+		await ctx.editMessageText('Спасибо, вы указали город: ' + cities[key])
+	};
+}
+
+for (const trigger in actions) {
+	bot.action(trigger, actions[trigger]);
+}
+
+const cityInlineKeyboard = Markup.inlineKeyboard([
+    Markup.button.callback('Алматы', 'Almaty'),
+    Markup.button.callback('Усть-Каменогорск', 'Ust-Kamenogorsk'),
+]);
+
 const handlers = {
-    '/start': async (ctx) => {
-        state.lastMessageId = ctx.message.message_id
-        await ctx.reply(start);
-    },
-    name: async (ctx) => {
-        const userId = ctx.message.from.id;
-        const userData = JSON.stringify({ id: userId, name: ctx.message.text });
-        writeUserNameToDB(userId, userData);
-        await ctx.reply(`Спасибо, ${ctx.message.text}! Вы успешно прислали свое имя.`)
-    },
+	'/start': async (ctx) => {
+		await ctx.reply(messages.city, cityInlineKeyboard);
+	},
 };
 
 bot.use(async (ctx) => {
-    console.log(ctx.message);
-    const userMessage = ctx.message.text;
-    if (Object.hasOwn(handlers, userMessage)) {
-        handlers[userMessage](ctx);
-    } else if (isMessageName(ctx)) {
-        handlers.name(ctx);
-    }
+	if (ctx.message) {
+		console.log(ctx.message);
+		const userMessage = ctx.message.text;
+		if (Object.hasOwn(handlers, userMessage)) {
+			handlers[userMessage](ctx);
+		}
+	}
 });
-
 
 bot.launch().then(() => console.log('Started'));
 
