@@ -1,20 +1,15 @@
-const { Markup } = require('telegraf');
 const bot = require('./lib/bot');
 const messages = require('./lib/messages');
 const actions = require('./lib/actions');
+const keyboards = require('./lib/keyboards');
 
 for (const trigger in actions) {
 	bot.action(trigger, actions[trigger]);
 }
 
-const cityInlineKeyboard = Markup.inlineKeyboard([
-    Markup.button.callback('Алматы', 'Almaty'),
-    Markup.button.callback('Усть-Каменогорск', 'Ust-Kamenogorsk'),
-]);
-
 const handlers = {
 	'/start': async (ctx) => {
-		await ctx.reply(messages.city, cityInlineKeyboard);
+		await ctx.reply(messages.city, keyboards.cities);
 	},
 };
 
