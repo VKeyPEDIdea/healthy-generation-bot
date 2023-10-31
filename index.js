@@ -1,17 +1,9 @@
 const bot = require('./lib/bot');
-const messages = require('./lib/messages');
 const actions = require('./lib/actions');
-const keyboards = require('./lib/keyboards');
 
 for (const trigger in actions) {
 	bot.action(trigger, actions[trigger]);
 }
-
-const handlers = {
-	'/start': async (ctx) => {
-		await ctx.reply(messages.city, keyboards.cities);
-	},
-};
 
 bot.use(async (ctx) => {
 	if (ctx.message) {
