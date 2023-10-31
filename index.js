@@ -1,5 +1,6 @@
 const bot = require('./lib/bot');
 const actions = require('./lib/actions');
+const handlers = require('./lib/handlers');
 
 for (const trigger in actions) {
 	bot.action(trigger, actions[trigger]);
