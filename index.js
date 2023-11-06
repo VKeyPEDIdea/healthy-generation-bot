@@ -18,7 +18,6 @@ bot.use(async (ctx) => {
 		if (Object.hasOwn(handlers, userMessage)) {
 			handlers[userMessage](ctx);
 		}
-
 	}
 });
 
