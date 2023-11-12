@@ -22,6 +22,7 @@ bot.use(async (ctx) => {
 });
 
 bot.launch().then(() => console.log('Started'));
+console.log(process.env.PORT);
 
 process.once('SIGINT', () => bot.stop('SIGINT'));
 process.once('SIGTERM', () => bot.stop('SIGTERM'));
