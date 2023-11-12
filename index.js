@@ -1,3 +1,4 @@
+const http = require('http');
 const bot = require('./lib/bot');
 const handlers = require('./lib/handlers');
 
@@ -26,3 +27,20 @@ console.log(process.env.PORT);
 
 process.once('SIGINT', () => bot.stop('SIGINT'));
 process.once('SIGTERM', () => bot.stop('SIGTERM'));
+
+
+http.createServer((request, response) => {
+    const { headers, method, url } = request;
+    let body = [];
+    request
+      .on('error', err => {
+        console.error(err);
+      })
+      .on('data', chunk => {
+        body.push(chunk);
+      })
+      .on('end', () => {
+        body = Buffer.concat(body).toString();
+      });
+  })
+  .listen(process.env.PORT); 
