@@ -4,6 +4,7 @@
   "description": "Telegram bot Healthy generation",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "test"
   },
   "keywords": [
